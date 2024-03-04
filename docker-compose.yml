@@ -1,4 +1,8 @@
 services:
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
   backend:
     build:
       context: .
@@ -10,7 +14,17 @@ services:
       - ENV=Docker
     depends_on:
       - mongodb
-  mongodb:
-    image: mongo:latest
+  build-frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile_frontend
+      target: frontend
+  webserver:
+    build:
+      context: .
+      dockerfile: Dockerfile_frontend
+      target: webserver
     ports:
-      - "27017:27017"
+      - "3000:80"
+    depends_on:
+      - build-frontend
